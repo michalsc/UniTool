@@ -12,7 +12,7 @@ add_executable(UniTool
     src/main.c
 )
 
-target_link_options(UniTool PRIVATE -ffreestanding -m68040 -nostdlib -nostartfiles -Wl,-e,__start)
+target_link_options(UniTool PRIVATE -ffreestanding -m68040 -s -nostdlib -nostartfiles -Wl,-e,__start)
 target_compile_options(UniTool PRIVATE -Os -m68040 -m68881 -fomit-frame-pointer)
 target_compile_definitions(UniTool PRIVATE VERSION_STRING="${VERSTRING}")
 target_include_directories(UniTool PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
