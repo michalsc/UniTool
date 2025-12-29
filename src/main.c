@@ -43,7 +43,7 @@ APTR                    UnicamBase;
 
 static const char version[] __attribute__((used)) = "$VER: " VERSION_STRING;
 
-#define RDA_TEMPLATE "WIDTH/K/N,HEIGHT/K/N,X/K/N,Y/K/N,B/K/N,C/K/N,ASPECT/K/N,PHASE/K/N,SCALER/K/N,SMOOTH/S,INTEGER/S,GUI/S,S=Silent/S"
+#define RDA_TEMPLATE "WIDTH/K/N,HEIGHT/K/N,X/K/N,Y/K/N,B/K/N,C/K/N,ASPECT/K/N,PHASE/K/N,SCALER/K/N,SMOOTH/S,INTEGER/S,GUI/S,QUIET/S"
 
 enum {
     OPT_WIDTH,
@@ -58,7 +58,7 @@ enum {
     OPT_SMOOTH,
     OPT_INTEGER,
     OPT_GUI,
-    OPT_SILENT,
+    OPT_QUIET,
     OPT_COUNT
 };
 
@@ -111,7 +111,7 @@ int main(int wantGUI)
         if (args)
         {
             wantGUI = result[OPT_GUI];
-            silent = result[OPT_SILENT];
+            silent = result[OPT_QUIET];
             smooth = result[OPT_SMOOTH];
             integer = result[OPT_INTEGER];
 
