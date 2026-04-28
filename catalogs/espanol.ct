@@ -1,0 +1,112 @@
+## version $VER: unitool.catalog 1.0 (22.04.2026)
+## language español
+## codeset 0
+;
+;
+## chunk AUTH "Hugo García Espiñeira"
+;
+MSG_MENU_PROJECT
+Proyecto
+;
+MSG_MENU_OPEN
+Abrir...
+;
+MSG_MENU_SAVE_AS
+Guardar como...
+;
+MSG_MENU_ABOUT
+Acerca de...
+;
+MSG_MENU_QUIT
+Salir
+;
+MSG_MENU_EDIT
+Editar
+;
+MSG_MENU_COPY_TO_CLIPBOARD
+Copiar configuración a config.txt
+;
+MSG_MENU_RESET_TO_DEFAULTS
+Restablecer a valores predeterminados
+;
+MSG_MENU_RESET_TO_LAST_USED
+Restablecer los últimos valores usados
+;
+MSG_ASL_OPEN_PRESET
+Abrir configuración existente...
+;
+MSG_ASL_SAVE_PRESET
+Guardar configuración como...
+;
+MSG_NOT_AVAILABLE
+N/D
+;
+MSG_ABOUT_TEXT
+Herramienta de configuración para\nFramethrower
+;
+MSG_ABOUT_VERSION
+Versión de UniTool:
+;
+MSG_ABOUT_EMU68_VERSION
+Versión de Emu68:
+;
+MSG_ABOUT_FT_VERSION
+Versión de Framethrower:
+;
+MSG_ABOUT_FT_GIT
+Git de Framethrower:
+;
+MSG_ABOUT_DISMISS
+Cerrar
+;
+MSG_IMAGE_CROP_AND_SIZE
+Recorte y tamaño de imagen
+;
+MSG_WIDTH
+Ancho
+;
+MSG_HEIGHT
+Alto
+;
+MSG_OFFSET_X
+Desplazamiento X
+;
+MSG_OFFSET_Y
+Desplazamiento Y
+;
+MSG_ASPECT_RATIO
+Relación de aspecto
+;
+MSG_SCALING_AND_SMOOTHING
+Escalado y suavizado
+;
+MSG_INTEGER_ONLY
+Solo enteros
+;
+MSG_SMOOTHING
+Suavizado
+;
+MSG_KERNEL_B
+Kernel B
+;
+MSG_KERNEL_C
+Kernel C
+;
+MSG_PHASE
+Fase
+;
+MSG_SCANLINES
+Scanlines
+;
+MSG_SCANLINES_NORMAL
+Scanlines progresivas
+;
+MSG_SCANLINES_LACED
+Scanlines entrelazadas
+;
+MSG_FAILED_TO_OPEN_NAME_VERSION
+Error al abrir %s versión %ld\n
+;
+MSG_LOADING_PRESET
+Cargando configuración '%s'\n
+;
