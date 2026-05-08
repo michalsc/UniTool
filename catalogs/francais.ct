@@ -1,0 +1,110 @@
+## version $VER: unitool.catalog 1.0 (26.04.2026)
+## language français
+## codeset 0
+;
+;
+MSG_MENU_PROJECT
+Projet
+;
+MSG_MENU_OPEN
+Ouvrir...
+;
+MSG_MENU_SAVE_AS
+Enregistrer sous...
+;
+MSG_MENU_ABOUT
+À propos...
+;
+MSG_MENU_QUIT
+Quitter
+;
+MSG_MENU_EDIT
+Édition
+;
+MSG_MENU_COPY_TO_CLIPBOARD
+Copier les réglages config.txt dans le presse-papiers
+;
+MSG_MENU_RESET_TO_DEFAULTS
+Réinitialiser les valeurs par défaut
+;
+MSG_MENU_RESET_TO_LAST_USED
+Réinitialiser aux dernières valeurs utilisées
+;
+MSG_ASL_OPEN_PRESET
+Ouvrir un préréglage existant...
+;
+MSG_ASL_SAVE_PRESET
+Nommer le préréglage...
+;
+MSG_NOT_AVAILABLE
+N/D
+;
+MSG_ABOUT_TEXT
+Utilitaire de réglage pour\nFramethrower
+;
+MSG_ABOUT_VERSION
+Version UniTool :
+;
+MSG_ABOUT_EMU68_VERSION
+Version Emu68 :
+;
+MSG_ABOUT_FT_VERSION
+Version Framethrower :
+;
+MSG_ABOUT_FT_GIT
+Git Framethrower :
+;
+MSG_ABOUT_DISMISS
+Fermer
+;
+MSG_IMAGE_CROP_AND_SIZE
+Recadrage et taille de l'image
+;
+MSG_WIDTH
+Largeur
+;
+MSG_HEIGHT
+Hauteur
+;
+MSG_OFFSET_X
+Décalage X
+;
+MSG_OFFSET_Y
+Décalage Y
+;
+MSG_ASPECT_RATIO
+Rapport d'aspect
+;
+MSG_SCALING_AND_SMOOTHING
+Mise à l'échelle et lissage
+;
+MSG_INTEGER_ONLY
+Entier uniquement
+;
+MSG_SMOOTHING
+Lissage
+;
+MSG_KERNEL_B
+Kernel B
+;
+MSG_KERNEL_C
+Kernel C
+;
+MSG_PHASE
+Phase
+;
+MSG_SCANLINES
+Scanlines
+;
+MSG_SCANLINES_NORMAL
+Scanlines normales
+;
+MSG_SCANLINES_LACED
+Scanlines entrelacées
+;
+MSG_FAILED_TO_OPEN_NAME_VERSION
+Échec d'ouverture de %s version %ld\n
+;
+MSG_LOADING_PRESET
+Chargement du préréglage '%s'\n
+;

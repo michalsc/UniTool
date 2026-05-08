@@ -1,0 +1,110 @@
+## version $VER: unitool.catalog 1.0 (22.04.2026)
+## language português
+## codeset 0
+;
+;
+MSG_MENU_PROJECT
+Projeto
+;
+MSG_MENU_OPEN
+Abrir...
+;
+MSG_MENU_SAVE_AS
+Guardar como...
+;
+MSG_MENU_ABOUT
+Sobre...
+;
+MSG_MENU_QUIT
+Sair
+;
+MSG_MENU_EDIT
+Editar
+;
+MSG_MENU_COPY_TO_CLIPBOARD
+Copiar definições de config.txt para a área de transferência
+;
+MSG_MENU_RESET_TO_DEFAULTS
+Repor valores predefinidos
+;
+MSG_MENU_RESET_TO_LAST_USED
+Repor últimos valores utilizados
+;
+MSG_ASL_OPEN_PRESET
+Abrir predefinição existente...
+;
+MSG_ASL_SAVE_PRESET
+Dar nome à predefinição...
+;
+MSG_NOT_AVAILABLE
+N/D
+;
+MSG_ABOUT_TEXT
+Utilitário de configuração para\nFramethrower
+;
+MSG_ABOUT_VERSION
+Versão UniTool:
+;
+MSG_ABOUT_EMU68_VERSION
+Versão Emu68:
+;
+MSG_ABOUT_FT_VERSION
+Versão Framethrower:
+;
+MSG_ABOUT_FT_GIT
+Framethrower git:
+;
+MSG_ABOUT_DISMISS
+Fechar
+;
+MSG_IMAGE_CROP_AND_SIZE
+Recorte e tamanho da imagem
+;
+MSG_WIDTH
+Largura
+;
+MSG_HEIGHT
+Altura
+;
+MSG_OFFSET_X
+Deslocamento X
+;
+MSG_OFFSET_Y
+Deslocamento Y
+;
+MSG_ASPECT_RATIO
+Proporção de aspeto
+;
+MSG_SCALING_AND_SMOOTHING
+Escala e suavização
+;
+MSG_INTEGER_ONLY
+Apenas inteiros
+;
+MSG_SMOOTHING
+Suavização
+;
+MSG_KERNEL_B
+Kernel B
+;
+MSG_KERNEL_C
+Kernel C
+;
+MSG_PHASE
+Fase
+;
+MSG_SCANLINES
+Scanlines
+;
+MSG_SCANLINES_NORMAL
+Scanlines normal
+;
+MSG_SCANLINES_LACED
+Scanlines entrelaçadas
+;
+MSG_FAILED_TO_OPEN_NAME_VERSION
+Erro ao abrir %s versão %ld\n
+;
+MSG_LOADING_PRESET
+A carregar predefinição '%s'\n
+;
