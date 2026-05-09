@@ -485,6 +485,16 @@ ULONG CopyConfigHookFunc()
         RawDoFmt(",boot", NULL, (void*)StuffChar, &ptr); ptr--;
     }
 
+    get(chSmooth, MUIA_Selected, &tmp);
+    if (tmp) {
+        RawDoFmt(",smooth", NULL, (void*)StuffChar, &ptr); ptr--;
+    }
+
+    get(chInteger, MUIA_Selected, &tmp);
+    if (tmp) {
+        RawDoFmt(",int", NULL, (void*)StuffChar, &ptr); ptr--;
+    }
+
     if (full_w != 720) {
         RawDoFmt(",full_width=%ld", &tmp, (void*)StuffChar, &ptr); ptr--;
     }
@@ -495,12 +505,12 @@ ULONG CopyConfigHookFunc()
 
     get(slCropW, MUIA_Numeric_Value, &tmp);
     if (tmp != full_w) {
-        RawDoFmt(",width=%ld", &tmp, (void*)StuffChar, &ptr); ptr--;
+        RawDoFmt(",w=%ld", &tmp, (void*)StuffChar, &ptr); ptr--;
     }
     
     get(slCropH, MUIA_Numeric_Value, &tmp);
     if (tmp != full_h) {
-        RawDoFmt(",height=%ld", &tmp, (void*)StuffChar, &ptr); ptr--;
+        RawDoFmt(",h=%ld", &tmp, (void*)StuffChar, &ptr); ptr--;
     }
 
     get(slCropX, MUIA_Numeric_Value, &tmp);
@@ -515,7 +525,7 @@ ULONG CopyConfigHookFunc()
 
     get(slAspect, MUIA_Numeric_Value, &tmp);
     if (tmp != 1000) {
-        RawDoFmt(",aspect=%ld", &tmp, (void*)StuffChar, &ptr); ptr--;
+        RawDoFmt(",asp=%ld", &tmp, (void*)StuffChar, &ptr); ptr--;
     }
 
     get(slB, MUIA_Numeric_Value, &tmp);
@@ -530,27 +540,17 @@ ULONG CopyConfigHookFunc()
 
     get(slPhase, MUIA_Numeric_Value, &tmp);
     if (tmp != 64) {
-        RawDoFmt(",phase=%ld", &tmp, (void*)StuffChar, &ptr); ptr--;
-    }
-
-    get(chSmooth, MUIA_Selected, &tmp);
-    if (tmp) {
-        RawDoFmt(",smooth", NULL, (void*)StuffChar, &ptr); ptr--;
-    }
-
-    get(chInteger, MUIA_Selected, &tmp);
-    if (tmp) {
-        RawDoFmt(",integer", NULL, (void*)StuffChar, &ptr); ptr--;
+        RawDoFmt(",ph=%ld", &tmp, (void*)StuffChar, &ptr); ptr--;
     }
 
     get(slScanlines, MUIA_Numeric_Value, &tmp);
     if (tmp != 4) {
-        RawDoFmt(",scanlines=%ld", &tmp, (void*)StuffChar, &ptr); ptr--;
+        RawDoFmt(",sc=%ld", &tmp, (void*)StuffChar, &ptr); ptr--;
     }
 
     get(slScanlinesLaced, MUIA_Numeric_Value, &tmp);
     if (tmp != 4) {
-        RawDoFmt(",laced_scanlines=%ld", &tmp, (void*)StuffChar, &ptr); ptr--;
+        RawDoFmt(",scl=%ld", &tmp, (void*)StuffChar, &ptr); ptr--;
     }
 
     CopyToClipboard(str);
