@@ -159,18 +159,18 @@ void OpenNativeScreen(int ntsc)
     RectFill(rp, x0, y0, x1, y1);
 
     x0 = sw * 17 / gridCols + 1;
-    y0 = sh * 13 / gridRows + 1;
+    y0 = sh * (gridRows - 3) / gridRows + 1;
     x1 = sw * 19 / gridCols - 1;
-    y1 = sh * 15 / gridRows - 1;
+    y1 = sh * (gridRows - 1) / gridRows - 1;
 
     SetAPen(rp, 3);
 
     RectFill(rp, x0, y0, x1, y1);
 
     x0 = sw * 1 / gridCols + 1;
-    y0 = sh * 13 / gridRows + 1;
+    y0 = sh * (gridRows - 3) / gridRows + 1;
     x1 = sw * 3 / gridCols - 1;
-    y1 = sh * 15 / gridRows - 1;
+    y1 = sh * (gridRows - 1) / gridRows - 1;
 
     SetAPen(rp, 1);
     SetBPen(rp, 2);
@@ -201,8 +201,8 @@ void OpenNativeScreen(int ntsc)
 
     DrawEllipse(rp, 64, 64, 48, 48);
     DrawEllipse(rp, 640 - 64, 64, 48, 48);
-    DrawEllipse(rp, 64, 512 - 64, 48, 48);
-    DrawEllipse(rp, 640 - 64, 512 - 64, 48, 48);
+    DrawEllipse(rp, 64, sh - 64, 48, 48);
+    DrawEllipse(rp, 640 - 64, sh - 64, 48, 48);
 
         /* --- corner markers at screen edges --- */
     SetAPen(rp, 2);
