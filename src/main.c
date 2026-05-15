@@ -49,6 +49,7 @@ int _start()
 
 struct ExecBase *       SysBase       = NULL;
 struct DosLibrary *     DOSBase       = NULL;
+struct Library *        IconBase      = NULL;
 APTR                    UnicamBase    = NULL;
 
 
@@ -95,26 +96,32 @@ int main(struct WBStartup *wbmsg)
     if (UnicamBase == NULL)
         return -1;
 
-    /* Unicam resource must be of version 1.2 or higher, otherwise it does not expose functions we need */
-    if (((struct Library *)UnicamBase)->lib_Version < 1 ||
-        (((struct Library *)UnicamBase)->lib_Version == 1 && ((struct Library *)UnicamBase)->lib_Revision < 3))
-        return -1;
-
     InitLocale();
 
     DOSBase = (struct DosLibrary *)OpenLibrary("dos.library", 37);
     if (DOSBase == NULL)
         return -1;
 
+    /* Unicam resource must be of version 1.2 or higher, otherwise it does not expose functions we need */
+    if (((struct Library *)UnicamBase)->lib_Version < 1 ||
+        (((struct Library *)UnicamBase)->lib_Version == 1 && ((struct Library *)UnicamBase)->lib_Revision < 3))
+    {
+        Printf("This program requires Emu68 1.1 or higher\n");
+        CloseLibrary((struct Library *)DOSBase);
+        return -1;
+    }
+
     if (wantGUI)
     {
         int ntsc = -1;
         struct DiskObject *dobj;
-        struct Library *IconBase = OpenLibrary("icon.library", 0);
+        IconBase = OpenLibrary("icon.library", 0);
 
         if (IconBase)
         {
+            BPTR oldDir = CurrentDir(wbmsg->sm_ArgList[0].wa_Lock);
             dobj = GetDiskObject(wbmsg->sm_ArgList[0].wa_Name);
+            CurrentDir(oldDir);
             
             if (dobj)
             {
@@ -130,7 +137,7 @@ int main(struct WBStartup *wbmsg)
                 FreeDiskObject(dobj);
             }
 
-            CloseLibrary(IconBase);
+            
         }
 
         StartGUI(ntsc);
@@ -380,6 +387,14 @@ int main(struct WBStartup *wbmsg)
 
             FreeArgs(args);
         }
+    }
+
+    if (DOSBase != NULL) {
+        CloseLibrary((struct Library *)DOSBase);
+    }
+
+    if (IconBase != NULL) {
+        CloseLibrary(IconBase);
     }
 
     return 0;
