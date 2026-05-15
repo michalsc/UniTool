@@ -69,4 +69,6 @@ MSG_FAILED_TO_OPEN_NAME_VERSION (//)
 Failed to open %s version %ld\n
 MSG_LOADING_PRESET (//)
 Loading preset '%s'\n
+MSG_NEED_EMU68_1_1 (//)
+This program requires Emu68 1.1 or higher\n
 ;

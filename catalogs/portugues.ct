@@ -108,3 +108,6 @@ Erro ao abrir %s versão %ld\n
 MSG_LOADING_PRESET
 A carregar predefinição '%s'\n
 ;
+MSG_NEED_EMU68_1_1
+Este programa requer Emu68 versão 1.1 ou superior\n
+;

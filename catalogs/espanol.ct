@@ -110,3 +110,6 @@ Error al abrir %s versión %ld\n
 MSG_LOADING_PRESET
 Cargando configuración '%s'\n
 ;
+MSG_NEED_EMU68_1_1
+Este programa requiere Emu68 versión 1.1 o superior\n
+;

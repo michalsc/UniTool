@@ -106,7 +106,7 @@ int main(struct WBStartup *wbmsg)
     if (((struct Library *)UnicamBase)->lib_Version < 1 ||
         (((struct Library *)UnicamBase)->lib_Version == 1 && ((struct Library *)UnicamBase)->lib_Revision < 3))
     {
-        Printf("This program requires Emu68 1.1 or higher\n");
+        Printf(_(MSG_NEED_EMU68_1_1));
         CloseLibrary((struct Library *)DOSBase);
         return -1;
     }

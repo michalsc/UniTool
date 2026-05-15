@@ -7,13 +7,13 @@ MSG_MENU_PROJECT
 Projekt
 ;
 MSG_MENU_OPEN
-Öffnen...
+Ã–ffnen...
 ;
 MSG_MENU_SAVE_AS
 Speichern unter...
 ;
 MSG_MENU_ABOUT
-Über...
+Ãœber...
 ;
 MSG_MENU_QUIT
 Beenden
@@ -22,16 +22,16 @@ MSG_MENU_EDIT
 Editieren
 ;
 MSG_MENU_COPY_TO_CLIPBOARD
-Einstellungen für config.txt kopieren
+Einstellungen fÃ¼r config.txt kopieren
 ;
 MSG_MENU_RESET_TO_DEFAULTS
-Auf Standardwerte zurücksetzen
+Auf Standardwerte zurÃ¼cksetzen
 ;
 MSG_MENU_RESET_TO_LAST_USED
-Auf zuletzt verwendete Werte zurücksetzen
+Auf zuletzt verwendete Werte zurÃ¼cksetzen
 ;
 MSG_ASL_OPEN_PRESET
-Vorhandenes Preset öffnen...
+Vorhandenes Preset Ã¶ffnen...
 ;
 MSG_ASL_SAVE_PRESET
 Preset benennen...
@@ -40,7 +40,7 @@ MSG_NOT_AVAILABLE
 N/V
 ;
 MSG_ABOUT_TEXT
-Einstellungsprogramm für\nFramethrower
+Einstellungsprogramm fÃ¼r\nFramethrower
 ;
 MSG_ABOUT_VERSION
 UniTool Version:
@@ -55,16 +55,16 @@ MSG_ABOUT_FT_GIT
 Framethrower Git:
 ;
 MSG_ABOUT_DISMISS
-Schließen
+SchlieÃŸen
 ;
 MSG_IMAGE_CROP_AND_SIZE
-Bildausschnitt und Größe
+Bildausschnitt und GrÃ¶ÃŸe
 ;
 MSG_WIDTH
 Breite
 ;
 MSG_HEIGHT
-Höhe
+HÃ¶he
 ;
 MSG_OFFSET_X
 Versatz X
@@ -73,16 +73,16 @@ MSG_OFFSET_Y
 Versatz Y
 ;
 MSG_ASPECT_RATIO
-Seitenverhältnis
+SeitenverhÃ¤ltnis
 ;
 MSG_SCALING_AND_SMOOTHING
-Skalierung und Glättung
+Skalierung und GlÃ¤ttung
 ;
 MSG_INTEGER_ONLY
 Nur ganzzahlig
 ;
 MSG_SMOOTHING
-Glättung
+GlÃ¤ttung
 ;
 MSG_KERNEL_B
 Kernel B
@@ -103,8 +103,11 @@ MSG_SCANLINES_LACED
 Scanlinien laced
 ;
 MSG_FAILED_TO_OPEN_NAME_VERSION
-Fehler beim Öffnen von %s Version %ld\n
+Fehler beim Ã–ffnen von %s Version %ld\n
 ;
 MSG_LOADING_PRESET
 Preset '%s' wird geladen\n
+;
+MSG_NEED_EMU68_1_1
+Dieses Programm benÃ¶tigt Emu68 Version 1.1 oder hÃ¶her\n
 ;
