@@ -1,9 +1,9 @@
 ## version $VER: unitool.catalog 1.0 (22.04.2026)
-## language espa駉l
+## language espa帽ol
 ## codeset 0
 ;
 ;
-## chunk AUTH "Hugo Garc韆 Espi馿ira"
+## chunk AUTH "Hugo Garc铆a Espi帽eira"
 ;
 MSG_MENU_PROJECT
 Proyecto
@@ -24,34 +24,34 @@ MSG_MENU_EDIT
 Editar
 ;
 MSG_MENU_COPY_TO_CLIPBOARD
-Copiar configuraci髇 a config.txt
+Copiar configuraci贸n a config.txt
 ;
 MSG_MENU_RESET_TO_DEFAULTS
 Restablecer a valores predeterminados
 ;
 MSG_MENU_RESET_TO_LAST_USED
-Restablecer los 鷏timos valores usados
+Restablecer los 煤ltimos valores usados
 ;
 MSG_ASL_OPEN_PRESET
-Abrir configuraci髇 existente...
+Abrir configuraci贸n existente...
 ;
 MSG_ASL_SAVE_PRESET
-Guardar configuraci髇 como...
+Guardar configuraci贸n como...
 ;
 MSG_NOT_AVAILABLE
 N/D
 ;
 MSG_ABOUT_TEXT
-Herramienta de configuraci髇 para\nFramethrower
+Herramienta de configuraci贸n para\nFramethrower
 ;
 MSG_ABOUT_VERSION
-Versi髇 de UniTool:
+Versi贸n de UniTool:
 ;
 MSG_ABOUT_EMU68_VERSION
-Versi髇 de Emu68:
+Versi贸n de Emu68:
 ;
 MSG_ABOUT_FT_VERSION
-Versi髇 de Framethrower:
+Versi贸n de Framethrower:
 ;
 MSG_ABOUT_FT_GIT
 Git de Framethrower:
@@ -60,7 +60,7 @@ MSG_ABOUT_DISMISS
 Cerrar
 ;
 MSG_IMAGE_CROP_AND_SIZE
-Recorte y tama駉 de imagen
+Recorte y tama帽o de imagen
 ;
 MSG_WIDTH
 Ancho
@@ -75,7 +75,7 @@ MSG_OFFSET_Y
 Desplazamiento Y
 ;
 MSG_ASPECT_RATIO
-Relaci髇 de aspecto
+Relaci贸n de aspecto
 ;
 MSG_SCALING_AND_SMOOTHING
 Escalado y suavizado
@@ -105,8 +105,8 @@ MSG_SCANLINES_LACED
 Scanlines entrelazadas
 ;
 MSG_FAILED_TO_OPEN_NAME_VERSION
-Error al abrir %s versi髇 %ld\n
+Error al abrir %s versi贸n %ld\n
 ;
 MSG_LOADING_PRESET
-Cargando configuraci髇 '%s'\n
+Cargando configuraci贸n '%s'\n
 ;
