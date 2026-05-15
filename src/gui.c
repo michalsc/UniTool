@@ -77,12 +77,28 @@ ULONG def_x, def_y, def_w, def_h, def_aspect;
 ULONG def_b, def_c, def_phase, def_scan, def_scanl;
 ULONG def_integer, def_smooth;
 
-void OpenPALScreen(void)
+void OpenNativeScreen(int ntsc)
 {
     static UWORD pens[] = { -1 };
+    ULONG id = 0;
+
+    if (ntsc == 1) {
+        id = NTSC_MONITOR_ID;
+    }
+    else if (ntsc == 0) {
+        id = PAL_MONITOR_ID;
+    }
+    else {
+        if (GfxBase->DisplayFlags & PAL) {
+            id = PAL_MONITOR_ID;
+        }
+        else {
+            id = NTSC_MONITOR_ID;
+        }
+    }
 
     screen = OpenScreenTags(NULL,
-        SA_DisplayID,   PAL_MONITOR_ID | HIRESLACE_KEY,
+        SA_DisplayID,   id | HIRESLACE_KEY,
         SA_Depth,       2,
         SA_Title,       (ULONG)"UniTool GUI",
         SA_ShowTitle,   FALSE,
@@ -112,7 +128,7 @@ void OpenPALScreen(void)
     LONG arm = sw / 32;
 
     LONG gridCols = 20;
-    LONG gridRows = 16;
+    LONG gridRows = ntsc ? 12 : 16;
 
     LONG x0 = sw * 1 / gridCols + 1;
     LONG y0 = sh * 1 / gridRows + 1;
@@ -184,7 +200,7 @@ void OpenPALScreen(void)
     DrawEllipse(rp, 320, 256, 150, 150);
 
     DrawEllipse(rp, 64, 64, 48, 48);
-    DrawEllipse(rp, 640-64, 64, 48, 48);
+    DrawEllipse(rp, 640 - 64, 64, 48, 48);
     DrawEllipse(rp, 64, 512 - 64, 48, 48);
     DrawEllipse(rp, 640 - 64, 512 - 64, 48, 48);
 
@@ -1063,7 +1079,7 @@ BOOL BuildGUI(struct Screen * myScreen)
     return app != NULL;
 }
 
-int StartGUI()
+int StartGUI(LONG ntsc)
 {
     UnicamBase = OpenResource("unicam.resource");
     GfxBase = (struct GfxBase *)OpenLibrary("graphics.library", 39);
@@ -1078,7 +1094,7 @@ int StartGUI()
 
             if (MUIMasterBase)
             {
-                OpenPALScreen();
+                OpenNativeScreen(ntsc);
                 if (screen)
                 {
                     //CloneWorkbenchPalette(screen);

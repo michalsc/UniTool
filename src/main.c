@@ -3,6 +3,9 @@
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <proto/unicam.h>
+#include <proto/icon.h>
+#include <workbench/startup.h>
+#include <workbench/icon.h>
 
 #include "messages.h"
 #include "presets.h"
@@ -13,7 +16,7 @@
 
 #include "strings.h"
 
-int main(int);
+int main(struct WBStartup *wbmsg);
 
 /* Startup code including workbench message support */
 int _start()
@@ -31,7 +34,7 @@ int _start()
         wbmsg = (struct WBStartup *)GetMsg(&p->pr_MsgPort);
     }
 
-    ret = main(wbmsg ? 1 : 0);
+    ret = main(wbmsg);
 
     CleanupLocale();
 
@@ -53,7 +56,7 @@ APTR                    UnicamBase    = NULL;
 
 const char version[] __attribute__((used)) = VERSION_STRING;
 
-#define RDA_TEMPLATE "LOAD/K,SAVE/K,WIDTH/K/N,HEIGHT/K/N,X/K/N,Y/K/N,B/K/N,C/K/N,ASPECT/K/N,PHASE/K/N,SCALER/K/N,SMOOTH/S,INTEGER/S,GUI/S,QUIET/S"
+#define RDA_TEMPLATE "LOAD/K,SAVE/K,WIDTH/K/N,HEIGHT/K/N,X/K/N,Y/K/N,B/K/N,C/K/N,ASPECT/K/N,PHASE/K/N,SCALER/K/N,SMOOTH/S,NOSMOOTH/S,INTEGER/S,NOINTEGER/S,GUI/S,NTSC/S,PAL/S,INFO/S,QUIET/S"
 
 enum {
     OPT_PRESET_LOAD,
@@ -68,17 +71,24 @@ enum {
     OPT_PHASE,
     OPT_SCALER,
     OPT_SMOOTH,
+    OPT_NOSMOOTH,
     OPT_INTEGER,
+    OPT_NOINTEGER,
     OPT_GUI,
+    OPT_NTSC,
+    OPT_PAL,
+    OPT_INFO,
     OPT_QUIET,
     OPT_COUNT
 };
 
 LONG result[OPT_COUNT];
 
-int main(int wantGUI)
+int main(struct WBStartup *wbmsg)
 {
     struct RDArgs *args;
+    int wantGUI = wbmsg != NULL;
+
     SysBase = *(struct ExecBase **)4;
 
     UnicamBase = OpenResource("unicam.resource");
@@ -98,7 +108,32 @@ int main(int wantGUI)
 
     if (wantGUI)
     {
-        StartGUI();
+        int ntsc = -1;
+        struct DiskObject *dobj;
+        struct Library *IconBase = OpenLibrary("icon.library", 0);
+
+        if (IconBase)
+        {
+            dobj = GetDiskObject(wbmsg->sm_ArgList[0].wa_Name);
+            
+            if (dobj)
+            {
+                if (FindToolType(dobj->do_ToolTypes, "NTSC"))
+                {
+                    ntsc = 1;
+                }
+                else if (FindToolType(dobj->do_ToolTypes, "PAL"))
+                {
+                    ntsc = 0;
+                }
+
+                FreeDiskObject(dobj);
+            }
+
+            CloseLibrary(IconBase);
+        }
+
+        StartGUI(ntsc);
     }
     else
     {
@@ -111,9 +146,10 @@ int main(int wantGUI)
         const ULONG kernel_b = UnicamGetKernel() >> 16;
         const ULONG kernel_c = UnicamGetKernel() & 0xffff;
 
+        ULONG info = 0;
         ULONG silent = 0;
-        ULONG smooth = 0;
-        ULONG integer = 0;
+        ULONG smooth = -1;
+        ULONG integer = -1;
         LONG width = current_width;
         LONG height = current_height;
         LONG dx = current_dx;
@@ -123,6 +159,7 @@ int main(int wantGUI)
         LONG phase = -1;
         LONG scaler = -1;
         LONG aspect = -1;
+        LONG ntsc = -1;
 
         args = ReadArgs(RDA_TEMPLATE, result, NULL);
 
@@ -130,12 +167,31 @@ int main(int wantGUI)
         {
             wantGUI = result[OPT_GUI];
             silent = result[OPT_QUIET];
-            smooth = result[OPT_SMOOTH];
-            integer = result[OPT_INTEGER];
+            info = result[OPT_INFO];
+
+            if (result[OPT_SMOOTH])
+            {
+                smooth = 1;
+            } else if (result[OPT_NOSMOOTH]) {
+                smooth = 0;
+            }
+
+            if (result[OPT_NTSC])
+            {
+                ntsc = 1;
+            } else if (result[OPT_PAL]) {
+                ntsc = 0;
+            }
+
+            if (result[OPT_INTEGER]) {
+                integer = 1;
+            } else if (result[OPT_NOINTEGER]) {
+                integer = 0;
+            }
 
             if (wantGUI)
             {
-                StartGUI();
+                StartGUI(ntsc);
             }
             else
             {
@@ -274,17 +330,17 @@ int main(int wantGUI)
 
                 ULONG cfg = UnicamGetConfig();
 
-                if (smooth) {
+                if (smooth == 1) {
                     cfg |= UNICAMF_SMOOTHING;
                 }
-                else {
+                else if (smooth == 0) {
                     cfg &= ~UNICAMF_SMOOTHING;
                 }
 
-                if (integer) {
+                if (integer == 1) {
                     cfg |= UNICAMF_INTEGER;
                 }
-                else {
+                else if (integer == 0) {
                     cfg &= ~UNICAMF_INTEGER;
                 }
 
