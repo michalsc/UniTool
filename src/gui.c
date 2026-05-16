@@ -929,7 +929,8 @@ BOOL BuildGUI(struct Screen * myScreen)
                             MUIA_Slider_Min,   0,
                             MUIA_Slider_Max,   4,
                             MUIA_Slider_Level, 0,
-                            MUIA_MinWidth, 40,
+                            MUIA_MinWidth,    40,
+                            MUIA_Disabled,  TRUE,
                         End,
 
                         Child, LLabel1(_(MSG_SCANLINES_LACED)),
@@ -937,6 +938,7 @@ BOOL BuildGUI(struct Screen * myScreen)
                             MUIA_Slider_Min,   0,
                             MUIA_Slider_Max,   4,
                             MUIA_Slider_Level, 0,
+                            MUIA_Disabled,  TRUE,
                         End,
                     End,
                 End,
@@ -951,6 +953,8 @@ BOOL BuildGUI(struct Screen * myScreen)
     if (rga_get_video_status(&vstat)) {
         def_scan = vstat.scanline_level;
         def_scanl = vstat.scanline_level_laced;
+        set(slScanlines, MUIA_Disabled, FALSE);
+        set(slScanlinesLaced, MUIA_Disabled, FALSE);
         set(slScanlines, MUIA_Numeric_Value, def_scan);
         set(slScanlinesLaced, MUIA_Numeric_Value, def_scanl);
     }
