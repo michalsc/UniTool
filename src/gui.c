@@ -33,6 +33,7 @@ struct Library *        MUIMasterBase   = NULL;
 Object *                app             = NULL;
 Object *                win             = NULL;
 Object *                aboutWin        = NULL;
+Object *                updateWin       = NULL;
 Object *                slCropX         = NULL;
 Object *                slCropY         = NULL;
 Object *                slCropW         = NULL;
@@ -52,11 +53,15 @@ Object *                menuAbout       = NULL;
 Object *                menuQuit        = NULL;
 Object *                menuDefaults    = NULL;
 Object *                menuLastUsed    = NULL;
+Object *                menuUpdateFW    = NULL;
 Object *                closeAbout      = NULL;
+Object *                closeUpdate     = NULL;
 Object *                txEmuVer        = NULL;
 Object *                txFTVer         = NULL;
 Object *                txFTGit         = NULL;
 Object *                vg              = NULL;
+Object *                txUpdStatus     = NULL;
+Object *                pbUpdProgress   = NULL;
 
 struct Hook kernelHook;
 struct Hook cropSizeHook;
@@ -70,6 +75,7 @@ struct Hook openHook;
 struct Hook aboutHook;
 struct Hook saveAsHook;
 struct Hook copyConfigHook;
+struct Hook updateFWHook;
 struct Window *backdrop;
 struct Screen *screen;
 
@@ -128,7 +134,7 @@ void OpenNativeScreen(int ntsc)
     LONG arm = sw / 32;
 
     LONG gridCols = 20;
-    LONG gridRows = ntsc ? 12 : 16;
+    LONG gridRows = backdrop->Height == 400 ? 12 : 16;
 
     LONG x0 = sw * 1 / gridCols + 1;
     LONG y0 = sh * 1 / gridRows + 1;
@@ -574,6 +580,208 @@ ULONG CopyConfigHookFunc()
     return 0;
 }
 
+#define BENCH_SIZE 8192
+UBYTE bench_pattern[BENCH_SIZE];
+
+ULONG UpdateFWHookFunc()
+{
+    struct Library *AslBase = OpenLibrary("asl.library", 0);
+    BYTE aborted = FALSE;
+
+    if (AslBase != NULL)
+    {
+        struct FileRequester *fr = AllocAslRequest(ASL_FileRequest, NULL);
+
+        if (fr != NULL)
+        {
+            ULONG sigs;
+            BOOL result = AslRequestTags(fr,
+                ASLFR_TitleText, (ULONG)_(MSG_ASL_OPEN_FIRMWARE),
+                ASLFR_DoSaveMode, FALSE,
+                ASLFR_RejectIcons, TRUE,
+                ASLFR_Screen, (ULONG)screen,
+                TAG_DONE, 0UL
+            );
+
+            set(updateWin, MUIA_Window_Open, TRUE);
+            set(updateWin, MUIA_Width, 300);
+            set(txUpdStatus, MUIA_Text_Contents, (ULONG)"Testing connection");
+            set(pbUpdProgress, MUIA_Gauge_Current, 0);
+            set(closeUpdate, MUIA_Disabled, TRUE);
+
+            DoMethod(app, MUIM_Application_NewInput, &sigs);
+
+            rga_flush_pipe();
+
+            /* Fill bench pattern with some pre-computed values */
+            for(int i=0; i<BENCH_SIZE; i++) {
+                bench_pattern[i] = (uint8_t)(i & 0xFF);
+            }
+
+            /* Write the data to framethrower RAM */
+            for (int i = 0; i < BENCH_SIZE; i += 2) {
+                
+                UWORD word = (bench_pattern[i] << 8) | bench_pattern[i+1];
+
+                if (!rga_exec_cmd(FTCMD_WRITE, i, word, NULL)) {
+                    set(txUpdStatus, MUIA_Text_Contents, (ULONG)"ERROR!!!");
+                    aborted = TRUE;
+                    break;
+                }
+
+                set(pbUpdProgress, MUIA_Gauge_Current, (100 * i) / (2 * BENCH_SIZE));
+
+                if (DoMethod(app, MUIM_Application_NewInput, &sigs) == MUIV_Application_ReturnID_Quit) {
+                    aborted = TRUE;
+                    break;
+                }
+            }
+
+            if (!aborted)
+            {
+                for (volatile int k=0; k<5000; k++);
+
+                int errors = 0;
+                for (int i = 0; i < BENCH_SIZE; i += 2) {
+                    UWORD val_in = 0;
+                    if (!rga_exec_cmd(FTCMD_READ, i, 0, &val_in)) {
+                        set(txUpdStatus, MUIA_Text_Contents, (ULONG)"ERROR!");
+                        aborted = TRUE;
+                        break;
+                    }
+
+                    UBYTE hi = (val_in >> 8) & 0xFF;
+                    UBYTE lo = val_in & 0xFF;
+
+                    if (hi != bench_pattern[i] || lo != bench_pattern[i+1]) {
+                        set(txUpdStatus, MUIA_Text_Contents, (ULONG)"Data read/write mismatch");
+                        aborted = TRUE;
+                        errors++;
+                    }
+
+                    set(pbUpdProgress, MUIA_Gauge_Current, (100 * (i + BENCH_SIZE) + BENCH_SIZE / 2) / (2 * BENCH_SIZE));
+                    if (DoMethod(app, MUIM_Application_NewInput, &sigs) == MUIV_Application_ReturnID_Quit) {
+                        aborted = TRUE;
+                        break;
+                    }
+                }
+            }
+            
+            if (!aborted)
+            {
+                static char dirname[512];
+                char *dst = dirname;
+                char *src = fr->fr_Drawer;
+
+                while(*src) {
+                    *dst++ = *src++;
+                }
+                *dst++ = 0;
+                AddPart(dirname, fr->fr_File, 511);
+
+                BPTR fh = Open(dirname, MODE_OLDFILE);
+                
+                if (fh) {
+                    ULONG filesize;
+                    ULONG filesize_aligned;
+
+                    Seek(fh, 0, OFFSET_END);
+                    filesize = Seek(fh, 0, OFFSET_BEGINING);
+
+                    filesize_aligned = (filesize + 4095) & ~4095;
+                
+                    Printf("Filesize: %ld\n", filesize);
+                    Printf("Aligned: %ld\n", filesize_aligned);
+
+                    UWORD *buffer = AllocMem(filesize, MEMF_ANY);
+                    if (buffer)
+                    {
+                        Read(fh, buffer, filesize);
+                        
+                        if (buffer[0] != ('U' << 8) | 'F' && buffer[1] != ('2' << 8) | 10)
+                        {
+                            set(txUpdStatus, MUIA_Text_Contents, (ULONG)"Erasing Staging Area...");
+                            if (!rga_exec_cmd(FTCMD_FLASH_ERASE, 0, 0, NULL)) {
+                                set(txUpdStatus, MUIA_Text_Contents, (ULONG)"ERROR!");
+                                aborted = TRUE;
+                            }
+
+                            ULONG tout = 50;
+                            while(tout--)
+                            {
+                                if (DoMethod(app, MUIM_Application_NewInput, &sigs) == MUIV_Application_ReturnID_Quit) {
+                                    aborted = TRUE;
+                                    break;
+                                }
+                                Delay(5);
+                            }
+
+                            set(txUpdStatus, MUIA_Text_Contents, (ULONG)"Uploading firmware");
+
+                            for (int i = 0; i < filesize / 2; i++)
+                            {
+                                if (!rga_exec_cmd(FTCMD_FLASH_DATA, 0, buffer[i], NULL)) {
+                                    set(txUpdStatus, MUIA_Text_Contents, (ULONG)"ERROR!!!");
+                                    aborted = TRUE;
+                                    break;
+                                }
+
+                                set(pbUpdProgress, MUIA_Gauge_Current, (200 * i) / filesize);
+
+                                if (DoMethod(app, MUIM_Application_NewInput, &sigs) == MUIV_Application_ReturnID_Quit) {
+                                    aborted = TRUE;
+                                    break;
+                                }
+                            }
+
+                            set(pbUpdProgress, MUIA_Gauge_Current, 100);
+
+                            if (!aborted)
+                            {
+                                set(txUpdStatus, MUIA_Text_Contents, (ULONG)"Committing");
+                                if (DoMethod(app, MUIM_Application_NewInput, &sigs) == MUIV_Application_ReturnID_Quit) {
+                                    aborted = TRUE;
+                                } else {
+                                    rga_exec_cmd(FTCMD_FLASH_COMMIT, filesize_aligned, 0, NULL);
+                                    set(txUpdStatus, MUIA_Text_Contents, (ULONG)"All done");
+                                    DoMethod(app, MUIM_Application_NewInput, &sigs);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            set(txUpdStatus, MUIA_Text_Contents, (ULONG)"Do not flash with UF2 file!");
+                            aborted = TRUE;
+                        }
+                        
+                        FreeMem(buffer, filesize);
+                    }
+                    else
+                    {
+                        set(txUpdStatus, MUIA_Text_Contents, (ULONG)"Failed to allocate buffer!");
+                        aborted = TRUE;
+                    }
+
+                    Close(fh);
+                }
+                else
+                {
+                    set(txUpdStatus, MUIA_Text_Contents, (ULONG)"Failed to open firmware file");
+                    aborted = TRUE;
+                }
+            }
+
+            set(closeUpdate, MUIA_Disabled, FALSE);
+
+            FreeAslRequest(fr);
+        }
+
+        CloseLibrary(AslBase);
+    }
+
+    return 0;
+}
+
 ULONG OpenHookFunc()
 {
     struct Library *AslBase = OpenLibrary("asl.library", 0);
@@ -763,6 +971,13 @@ BOOL BuildGUI(struct Screen * myScreen)
                 MUIA_Family_Child, MenuitemObject,
                     MUIA_Menuitem_Title, (APTR)-1,
                 End,
+                MUIA_Family_Child, menuUpdateFW = MenuitemObject,
+                    MUIA_Menuitem_Title, (ULONG)_(MSG_MENU_UPDATE_FW),
+                    MUIA_Menuitem_Enabled, FALSE,
+                End,
+                MUIA_Family_Child, MenuitemObject,
+                    MUIA_Menuitem_Title, (APTR)-1,
+                End,
                 MUIA_Family_Child, menuAbout = MenuitemObject,
                     MUIA_Menuitem_Title, (ULONG)_(MSG_MENU_ABOUT),
                 End,
@@ -791,6 +1006,45 @@ BOOL BuildGUI(struct Screen * myScreen)
                 MUIA_Family_Child, menuLastUsed = MenuitemObject,
                     MUIA_Menuitem_Title, (ULONG)_(MSG_MENU_RESET_TO_LAST_USED),
                     MUIA_Menuitem_Shortcut, "L",
+                End,
+            End,
+        End,
+
+        SubWindow, updateWin = WindowObject,
+            MUIA_Window_Screen,       myScreen,
+            MUIA_Window_LeftEdge,     MUIV_Window_LeftEdge_Centered,
+            MUIA_Window_TopEdge,      MUIV_Window_TopEdge_Centered,
+            MUIA_Window_Borderless,   TRUE,
+            MUIA_Window_Title,        NULL,
+            MUIA_Window_CloseGadget,  FALSE,
+            MUIA_Window_DragBar,      FALSE,
+            MUIA_Window_DepthGadget,  FALSE,
+            MUIA_Window_SizeGadget,   FALSE,
+
+            WindowContents, VGroup, GroupFrame,
+                
+                Child, VSpace(2),
+                Child, HGroup,
+                    MUIA_MinWidth, 250,
+                    Child, HSpace(0),
+                    Child, txUpdStatus = TextObject,
+                        MUIA_Text_PreParse, "\033c",
+                        MUIA_Text_Contents, "                                                 ",
+                    End,
+                    Child, HSpace(0),
+                End,
+                Child, pbUpdProgress = GaugeObject,
+                    GaugeFrame,
+                    MUIA_Gauge_Horiz, TRUE,
+                    MUIA_Gauge_Max, 100,
+                    MUIA_Gauge_Current, 0,
+                    MUIA_Gauge_InfoText, "%ld%%",
+                End,
+                Child, VSpace(2),
+                Child, HGroup,
+                    Child, HSpace(0),
+                    Child, closeUpdate = SimpleButton(_(MSG_ABOUT_DISMISS)),
+                    Child, HSpace(0),
                 End,
             End,
         End,
@@ -955,6 +1209,7 @@ BOOL BuildGUI(struct Screen * myScreen)
         def_scanl = vstat.scanline_level_laced;
         set(slScanlines, MUIA_Disabled, FALSE);
         set(slScanlinesLaced, MUIA_Disabled, FALSE);
+        set(menuUpdateFW, MUIA_Menuitem_Enabled, TRUE);
         set(slScanlines, MUIA_Numeric_Value, def_scan);
         set(slScanlinesLaced, MUIA_Numeric_Value, def_scanl);
     }
@@ -1010,6 +1265,7 @@ BOOL BuildGUI(struct Screen * myScreen)
     saveAsHook.h_Entry     = (HOOKFUNC)SaveAsHookFunc;
     copyConfigHook.h_Entry = (HOOKFUNC)CopyConfigHookFunc;
     aboutHook.h_Entry      = (HOOKFUNC)AboutHookFunc;
+    updateFWHook.h_Entry   = (HOOKFUNC)UpdateFWHookFunc;
 
     DoMethod(slCropX, MUIM_Notify, MUIA_Numeric_Value, MUIV_EveryTime,
         app, 2, MUIM_CallHook, &cropOffsetHook);
@@ -1056,6 +1312,9 @@ BOOL BuildGUI(struct Screen * myScreen)
     DoMethod(menuSaveAs, MUIM_Notify, MUIA_Menuitem_Trigger, MUIV_EveryTime,
         (ULONG)app, 2, MUIM_CallHook, &saveAsHook);
 
+    DoMethod(menuUpdateFW, MUIM_Notify, MUIA_Menuitem_Trigger, MUIV_EveryTime,
+        (ULONG)app, 2, MUIM_CallHook, &updateFWHook);
+
     DoMethod(menuCopyConfig, MUIM_Notify, MUIA_Menuitem_Trigger, MUIV_EveryTime,
         (ULONG)app, 2, MUIM_CallHook, &copyConfigHook);
 
@@ -1076,6 +1335,9 @@ BOOL BuildGUI(struct Screen * myScreen)
 
     DoMethod(closeAbout, MUIM_Notify, MUIA_Pressed, FALSE,
         aboutWin, 3, MUIM_Set, MUIA_Window_Open, FALSE);
+
+    DoMethod(closeUpdate, MUIM_Notify, MUIA_Pressed, FALSE,
+        updateWin, 3, MUIM_Set, MUIA_Window_Open, FALSE);
 
     DoMethod(closeAbout, MUIM_Notify, MUIA_Pressed, FALSE,
         vg, 3, MUIM_Set, MUIA_Disabled, FALSE);

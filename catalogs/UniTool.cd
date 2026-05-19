@@ -71,4 +71,8 @@ MSG_LOADING_PRESET (//)
 Loading preset '%s'\n
 MSG_NEED_EMU68_1_1 (//)
 This program requires Emu68 1.1 or higher\n
+MSG_MENU_UPDATE_FW (//)
+Update Firmware...
+MSG_ASL_OPEN_FIRMWARE (//)
+Select firmware file...
 ;
